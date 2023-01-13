@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import ProtectedRoute from "../components/util/ProtectedRoute";
 import PrimaryLayout from "../components/layouts/PrimaryLayout";
 
-const noAuthRequired = ["/", "/SignIn"];
+const noAuthRequired = ["/", "/Login"];
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();

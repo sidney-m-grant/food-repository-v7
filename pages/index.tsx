@@ -1,13 +1,12 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import styled from "styled-components";
 
 export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    router.push("/SignIn");
+    router.push("/Login");
   }, [router]);
 
   return (

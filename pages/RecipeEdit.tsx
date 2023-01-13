@@ -1,7 +1,12 @@
 import React from "react";
+import RecipeEditSidebar from "../components/recipeEdit/recipeEditSidebar/RecipeEditSidebar";
 
 const RecipeEdit = () => {
-  return <div>RecipeEdit</div>;
+  return (
+    <div>
+      <RecipeEditSidebar></RecipeEditSidebar>
+    </div>
+  );
 };
 
 export default RecipeEdit;

@@ -34,17 +34,11 @@ const Login = () => {
       const recipeCollection = {
         name: "recipe",
       };
-      const calendarCollection = {
-        name: "calendar",
-      };
       const friendRequestArray = {
         friendRequests: [""],
       };
       const friendListArray = {
         friendList: [""],
-      };
-      const cookBookArray = {
-        cookBooks: ["All Recipes"],
       };
       await setDoc(doc(db, signUpEmail, "social"), socialCollection);
       await setDoc(
@@ -56,14 +50,7 @@ const Login = () => {
         friendListArray
       );
       await setDoc(doc(db, signUpEmail, "recipeCollection"), recipeCollection);
-      await setDoc(
-        doc(db, signUpEmail, "calendarCollection"),
-        calendarCollection
-      );
-      await setDoc(
-        doc(db, signUpEmail, "recipeCollection", "miscItems", "cookBookArray"),
-        cookBookArray
-      );
+      router.push("/RecipeInput");
     } catch (err) {
       console.log(err);
     }
