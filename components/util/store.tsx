@@ -24,14 +24,11 @@ export type Recipe = {
   docId?: string;
   stepList: StepBlock[];
   ingredientList: IngredientBlock[];
-  imgPath?: string;
-  prepTime?: string;
-  activeCookingTime?: string;
-  totalTime?: string;
-  servesAmount?: string;
-  source?: string;
-  briefDescription?: string;
-  cookBook?: string;
+  imgPath: string;
+  servesAmount: string;
+  source: string;
+  briefDescription: string;
+  cookBook: string;
 };
 
 export type RecipeStep = {
@@ -41,13 +38,11 @@ export type RecipeStep = {
 
 const currentRecipe: Recipe = {
   recipeName: "",
-  prepTime: "",
-  activeCookingTime: "",
-  totalTime: "",
   servesAmount: "",
   source: "",
   briefDescription: "",
   cookBook: "",
+  imgPath: "",
   stepList: [
     {
       for: "",
@@ -78,13 +73,11 @@ const currentRecipe: Recipe = {
 
 const editedRecipe: Recipe = {
   recipeName: "",
-  prepTime: "",
-  activeCookingTime: "",
-  totalTime: "",
   servesAmount: "",
   source: "",
   briefDescription: "",
   cookBook: "",
+  imgPath: "",
   stepList: [
     {
       for: "",
@@ -115,13 +108,11 @@ const editedRecipe: Recipe = {
 
 const inputRecipe: Recipe = {
   recipeName: "",
-  prepTime: "",
-  activeCookingTime: "",
-  totalTime: "",
   servesAmount: "",
   source: "",
   briefDescription: "",
   cookBook: "",
+  imgPath: "",
   stepList: [
     {
       for: "",
@@ -158,7 +149,6 @@ export const store = hookstate({
   inputRecipe: inputRecipe,
   editedImagePreview: "",
   inputImagePreview: "",
-  cookBookList: [],
   friendRequestList: [],
   listOfFriends: [],
   allRecipes: allRecipes,

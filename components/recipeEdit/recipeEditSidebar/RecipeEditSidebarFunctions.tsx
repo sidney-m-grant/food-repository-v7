@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { store } from "../../util/store";
 import { useHookstate, none } from "@hookstate/core";
-import { addDoc, collection, setDoc, doc } from "firebase/firestore";
+import { setDoc, doc } from "firebase/firestore";
 import { useAuth } from "../../../context/AuthContext";
 import { db, storage } from "../../../config/firebase";
 import {
@@ -13,13 +13,17 @@ import {
 import { v4 } from "uuid";
 import Compressor from "compressorjs";
 
-interface Props {}
+interface Props {
+  tempImageFile: File | null;
+  setTempImageFile: React.Dispatch<React.SetStateAction<File | null>>;
+}
 
-const RecipeEditSidebarFunctions: React.FC<Props> = ({}) => {
+const RecipeEditSidebarFunctions: React.FC<Props> = ({
+  tempImageFile,
+  setTempImageFile,
+}) => {
   const state = useHookstate(store);
   const { user } = useAuth();
-
-  const [tempImageFile, setTempImageFile] = useState<File | null>(null);
 
   const addNewStepBlock = () => {
     const length = state.editedRecipe.stepList.length;

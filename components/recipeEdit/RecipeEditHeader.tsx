@@ -3,7 +3,7 @@ import { store } from "../util/store";
 import { useHookstate } from "@hookstate/core";
 import styled from "styled-components";
 
-export const Input_Header_Container = styled.div`
+export const Edit_Header_Container = styled.div`
   border: 1px;
   border-style: solid;
   width: calc(100% - 150px);
@@ -13,7 +13,7 @@ export const Input_Header_Container = styled.div`
   display: inline-flexbox;
 `;
 
-const Input_Image = styled.div`
+const Edit_Image = styled.div`
   border: 1px;
   border-style: solid;
   display: inline-block;
@@ -23,7 +23,7 @@ const Input_Image = styled.div`
   vertical-align: top;
 `;
 
-const Input_Header_Parent_Container = styled.div`
+const Edit_Header_Parent_Container = styled.div`
   border: 1px;
   border-style: solid;
   display: inline-block;
@@ -31,14 +31,8 @@ const Input_Header_Parent_Container = styled.div`
   vertical-align: top;
 `;
 
-const RecipeInputHeader = () => {
+const RecipeEditHeader = () => {
   const state = useHookstate(store);
-
-  const handleNameChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    state.inputRecipe.recipeName.set(e.target.value);
-  };
 
   const handleServesAmountChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -65,44 +59,40 @@ const RecipeInputHeader = () => {
   };
 
   return (
-    <Input_Header_Parent_Container>
-      <Input_Header_Container>
-        <input
-          onChange={handleNameChange}
-          placeholder="name..."
-          value={state.inputRecipe.recipeName.get()}
-        ></input>
+    <Edit_Header_Parent_Container>
+      <Edit_Header_Container>
+        <span>{state.editedRecipe.recipeName.get()}</span>
         <input
           onChange={handleServesAmountChange}
           placeholder="serves..."
-          value={state.inputRecipe.servesAmount.get()}
+          value={state.editedRecipe.servesAmount.get()}
         ></input>
         <input
           onChange={handleSourceChange}
           placeholder="source..."
-          value={state.inputRecipe.source.get()}
+          value={state.editedRecipe.source.get()}
         ></input>
         <textarea
           onChange={handleBriefDescriptionChange}
           placeholder="brief description..."
-          value={state.inputRecipe.briefDescription.get()}
+          value={state.editedRecipe.briefDescription.get()}
         ></textarea>
         <input
           onChange={handleNewCookbookInputChange}
           placeholder="cookbook..."
-          value={state.inputRecipe.cookBook.get()}
+          value={state.editedRecipe.cookBook.get()}
         ></input>
-      </Input_Header_Container>
-      <Input_Image>
+      </Edit_Header_Container>
+      <Edit_Image>
         {state.inputImagePreview.get() ? (
           <img
-            src={state.inputImagePreview.get()}
+            src={state.editedImagePreview.get()}
             style={{ height: 150, width: 150 }}
           ></img>
         ) : null}
-      </Input_Image>
-    </Input_Header_Parent_Container>
+      </Edit_Image>
+    </Edit_Header_Parent_Container>
   );
 };
 
-export default RecipeInputHeader;
+export default RecipeEditHeader;

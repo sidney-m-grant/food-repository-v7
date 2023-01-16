@@ -1,15 +1,10 @@
 import React, { useState } from "react";
 import { store } from "../../util/store";
 import { useHookstate, none } from "@hookstate/core";
-import { addDoc, collection, setDoc, doc } from "firebase/firestore";
+import { addDoc, collection } from "firebase/firestore";
 import { useAuth } from "../../../context/AuthContext";
 import { db, storage } from "../../../config/firebase";
-import {
-  deleteObject,
-  getDownloadURL,
-  ref,
-  uploadBytes,
-} from "firebase/storage";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { v4 } from "uuid";
 import Compressor from "compressorjs";
 
@@ -53,12 +48,16 @@ const RecipeInputSidebarFunctions: React.FC<Props> = ({}) => {
 
   const deleteLastStepBlock = () => {
     const length = state.inputRecipe.stepList.length;
-    state.editedRecipe.stepList[length - 1].set(none);
+    if (length > 1) {
+      state.inputRecipe.stepList[length - 1].set(none);
+    }
   };
 
   const deleteLastIngredientBlock = () => {
     const length = state.inputRecipe.ingredientList.length;
-    state.editedRecipe.ingredientList[length - 1].set(none);
+    if (length > 1) {
+      state.inputRecipe.ingredientList[length - 1].set(none);
+    }
   };
 
   const handleImgPreview = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -83,8 +82,6 @@ const RecipeInputSidebarFunctions: React.FC<Props> = ({}) => {
   const uploadRecipe = async () => {
     if (
       state.inputRecipe.recipeName.get() &&
-      state.inputRecipe.stepList.get().length > 0 &&
-      state.inputRecipe.ingredientList.get().length > 0 &&
       state.inputRecipe.recipeName.get() !== "cookBooks" &&
       checkIfNameAlreadyExists(state.inputRecipe.recipeName.get())
     ) {
@@ -121,11 +118,6 @@ const RecipeInputSidebarFunctions: React.FC<Props> = ({}) => {
         }
       }
     }
-  };
-
-  const deleteImage = async (imgPath: string | undefined) => {
-    const deleteRef = ref(storage, imgPath);
-    await deleteObject(deleteRef);
   };
 
   return (

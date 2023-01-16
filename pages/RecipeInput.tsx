@@ -2,6 +2,7 @@ import React from "react";
 import RecipeInputHeader from "../components/recipeInput/RecipeInputHeader";
 import RecipeInputSidebar from "../components/recipeInput/recipeInputSidebar/RecipeInputSidebar";
 import styled from "styled-components";
+import RecipeInputMainContainer from "../components/recipeInput/RecipeInputMainContainer";
 
 const Recipe_Container = styled.div`
   margin-top: 30px;
@@ -13,6 +14,7 @@ const RecipeInput = () => {
     <Recipe_Container>
       <RecipeInputSidebar></RecipeInputSidebar>
       <RecipeInputHeader></RecipeInputHeader>
+      <RecipeInputMainContainer></RecipeInputMainContainer>
     </Recipe_Container>
   );
 };

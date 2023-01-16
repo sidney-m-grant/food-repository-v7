@@ -1,17 +1,16 @@
-import React, { useState, useEffect } from "react";
-import styled from "styled-components";
-import RecipeEditSidebarFunctions from "./RecipeEditSidebarFunctions";
+import React, { useEffect, useState } from "react";
+import { useHookstate } from "@hookstate/core";
 import { store, Recipe } from "../../util/store";
+import { useAuth } from "../../../context/AuthContext";
 import { getDocs, collection } from "firebase/firestore";
 import { db } from "../../../config/firebase";
-import { useAuth } from "../../../context/AuthContext";
-import { useHookstate } from "@hookstate/core";
-import RecipeEditCookbookComponent from "./recipeEditCookbook/RecipeEditCookbookComponent";
-import RecipeEditSearchComponent from "./RecipeEditSearchComponent";
+import styled from "styled-components";
+import RecipeListCookbookComponent from "./recipeListCookbook/RecipeListCookbookComponent";
+import RecipeListSearchComponent from "./RecipeListSearchComponent";
 
-type OpenSubMenu = "search" | "cookBooks" | "editTools" | "";
+type OpenSubMenu = "search" | "cookBooks" | "";
 
-const Recipe_Edit_Sidebar_Container = styled.div`
+const Recipe_List_Sidebar_Container = styled.div`
   width: 250px;
   position: fixed;
   left: 0;
@@ -22,7 +21,7 @@ const Recipe_Edit_Sidebar_Container = styled.div`
   bottom: 0px;
 `;
 
-const Recipe_Edit_Sidebar_Label = styled.span`
+const Recipe_List_Sidebar_Label = styled.span`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -31,17 +30,17 @@ const Recipe_Edit_Sidebar_Label = styled.span`
   margin: 5px;
 `;
 
-const RecipeEditSidebar = () => {
+const RecipeListSidebar = () => {
+  const [allRecipes, setAllRecipes] = useState<Recipe[]>([]);
+  const [openSubMenu, setOpenSubMenu] = useState<OpenSubMenu>("");
+  const [cookbookList, setCookbookList] = useState([]);
+  const [selectedCookbook, setSelectedCookbook] = useState<string>("");
   const { user } = useAuth();
   const state = useHookstate(store);
-  const [allRecipes, setAllRecipes] = useState<Recipe[]>([]);
-  const [cookbookList, setCookbookList] = useState<string[]>([]);
-  const [openSubMenu, setOpenSubMenu] = useState<OpenSubMenu>("");
-  const [selectedCookbook, setSelectedCookbook] = useState<string>("");
-  const [tempImageFile, setTempImageFile] = useState<File | null>(null);
 
   useEffect(() => {
     const getRecipes = async () => {
+      const cookbookList: any = [];
       const recipes = await getDocs(
         collection(db, user?.email, "recipeCollection", "recipes")
       );
@@ -91,50 +90,28 @@ const RecipeEditSidebar = () => {
     }
   };
 
-  const handleEditToolsClick = () => {
-    if (openSubMenu !== "editTools") {
-      setOpenSubMenu("editTools");
-    } else {
-      setOpenSubMenu("");
-    }
-  };
-
   return (
-    <Recipe_Edit_Sidebar_Container>
-      <Recipe_Edit_Sidebar_Label onClick={handleEditToolsClick}>
-        Edit Tools
-      </Recipe_Edit_Sidebar_Label>
-      {openSubMenu === "editTools" ? (
-        <RecipeEditSidebarFunctions
-          tempImageFile={tempImageFile}
-          setTempImageFile={setTempImageFile}
-        ></RecipeEditSidebarFunctions>
-      ) : null}
-      <br></br>
-      <Recipe_Edit_Sidebar_Label onClick={handleSearchClick}>
+    <Recipe_List_Sidebar_Container>
+      <Recipe_List_Sidebar_Label onClick={handleSearchClick}>
         Search
-      </Recipe_Edit_Sidebar_Label>
+      </Recipe_List_Sidebar_Label>
       {openSubMenu === "search" ? (
-        <RecipeEditSearchComponent
-          allRecipes={allRecipes}
-          setTempImageFile={setTempImageFile}
-        />
+        <RecipeListSearchComponent allRecipes={allRecipes} />
       ) : null}
       <br></br>
-      <Recipe_Edit_Sidebar_Label onClick={handleCookbooksClick}>
+      <Recipe_List_Sidebar_Label onClick={handleCookbooksClick}>
         Cook Books
-      </Recipe_Edit_Sidebar_Label>
+      </Recipe_List_Sidebar_Label>
       {openSubMenu === "cookBooks" ? (
-        <RecipeEditCookbookComponent
+        <RecipeListCookbookComponent
           allRecipes={allRecipes}
           setSelectedCookbook={setSelectedCookbook}
           selectedCookbook={selectedCookbook}
           cookbookList={cookbookList}
-          setTempImageFile={setTempImageFile}
         />
       ) : null}
-    </Recipe_Edit_Sidebar_Container>
+    </Recipe_List_Sidebar_Container>
   );
 };
 
-export default RecipeEditSidebar;
+export default RecipeListSidebar;
