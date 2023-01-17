@@ -1,5 +1,5 @@
 import React from "react";
-import { store, StepBlock } from "../util/store";
+import { store } from "../util/store";
 import { useHookstate, none } from "@hookstate/core";
 import RecipeInputStep from "./RecipeInputStep";
 

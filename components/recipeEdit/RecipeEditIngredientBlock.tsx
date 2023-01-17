@@ -1,24 +1,24 @@
 import React from "react";
 import { store } from "../util/store";
 import { useHookstate, none } from "@hookstate/core";
-import RecipeInputIngredient from "./RecipeInputIngredient";
+import RecipeEditIngredient from "./RecipeEditIngredient";
 
 interface Props {
-  inputIngredientBlock: any;
+  editIngredientBlock: any;
 }
 
-const RecipeInputIngredientBlock: React.FC<Props> = ({
-  inputIngredientBlock,
+const RecipeEditIngredientBlock: React.FC<Props> = ({
+  editIngredientBlock,
 }) => {
   const state = useHookstate(store);
 
-  const listOfIngredients = inputIngredientBlock.ingredients.map(
+  const listOfIngredients = editIngredientBlock.ingredients.map(
     (ingredient: any) => {
       return (
         <li key={ingredient.id}>
-          <RecipeInputIngredient
-            inputIngredient={ingredient}
-            inputIngredientBlock={inputIngredientBlock}
+          <RecipeEditIngredient
+            editIngredient={ingredient}
+            editIngredientBlock={editIngredientBlock}
             key={ingredient.id}
           />
         </li>
@@ -28,10 +28,10 @@ const RecipeInputIngredientBlock: React.FC<Props> = ({
 
   const handleAddIngredient = () => {
     const length =
-      state.inputRecipe.ingredientList[inputIngredientBlock.blockNumber]
+      state.editedRecipe.ingredientList[editIngredientBlock.blockNumber]
         .ingredients.length;
-    state.inputRecipe.ingredientList[
-      inputIngredientBlock.blockNumber
+    state.editedRecipe.ingredientList[
+      editIngredientBlock.blockNumber
     ].ingredients[length].set({
       amount: "",
       name: "",
@@ -42,26 +42,25 @@ const RecipeInputIngredientBlock: React.FC<Props> = ({
 
   const handleDeleteLastIngredient = () => {
     const length =
-      state.inputRecipe.ingredientList[inputIngredientBlock.blockNumber]
+      state.editedRecipe.ingredientList[editIngredientBlock.blockNumber]
         .ingredients.length - 1;
-    state.inputRecipe.ingredientList[
-      inputIngredientBlock.blockNumber
+    state.editedRecipe.ingredientList[
+      editIngredientBlock.blockNumber
     ].ingredients[length].set(none);
   };
 
-  const handleInputForChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    state.inputRecipe.ingredientList[inputIngredientBlock.blockNumber].for.set(
+  const handleEditedForChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    state.editedRecipe.ingredientList[editIngredientBlock.blockNumber].for.set(
       e.target.value
     );
   };
-
   return (
     <div>
       <div>
         <input
-          onChange={handleInputForChange}
-          value={state.inputRecipe.ingredientList[
-            inputIngredientBlock.blockNumber
+          onChange={handleEditedForChange}
+          value={state.editedRecipe.ingredientList[
+            editIngredientBlock.blockNumber
           ].for.get()}
         ></input>
       </div>
@@ -72,4 +71,4 @@ const RecipeInputIngredientBlock: React.FC<Props> = ({
   );
 };
 
-export default RecipeInputIngredientBlock;
+export default RecipeEditIngredientBlock;

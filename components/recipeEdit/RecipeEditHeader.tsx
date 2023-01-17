@@ -84,7 +84,7 @@ const RecipeEditHeader = () => {
         ></input>
       </Edit_Header_Container>
       <Edit_Image>
-        {state.inputImagePreview.get() ? (
+        {state.editedImagePreview.get() ? (
           <img
             src={state.editedImagePreview.get()}
             style={{ height: 150, width: 150 }}

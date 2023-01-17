@@ -1,6 +1,11 @@
 import React from "react";
 import { useHookstate } from "@hookstate/core";
 import { store, Ingredient, IngredientBlock } from "../util/store";
+import styled from "styled-components";
+
+const Ingredient_Text_Area = styled.textarea`
+  vertical-align: bottom;
+`;
 
 interface Props {
   inputIngredient: Ingredient;
@@ -25,7 +30,9 @@ const RecipeInputIngredient: React.FC<Props> = ({
     ].ingredients[inputIngredient.id - 1].unit.set(e.target.value);
   };
 
-  const handleChangeInputName = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeInputName = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     state.inputRecipe.ingredientList[
       inputIngredientBlock.blockNumber
     ].ingredients[inputIngredient.id - 1].name.set(e.target.value);
@@ -45,12 +52,12 @@ const RecipeInputIngredient: React.FC<Props> = ({
           inputIngredientBlock.blockNumber
         ].ingredients[inputIngredient.id - 1].unit.get()}
       ></input>
-      <input
+      <Ingredient_Text_Area
         onChange={handleChangeInputName}
         value={state.inputRecipe.ingredientList[
           inputIngredientBlock.blockNumber
         ].ingredients[inputIngredient.id - 1].name.get()}
-      ></input>
+      ></Ingredient_Text_Area>
     </div>
   );
 };

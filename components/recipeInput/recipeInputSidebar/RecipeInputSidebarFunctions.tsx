@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { store } from "../../util/store";
+import { store, StepBlock, IngredientBlock } from "../../util/store";
 import { useHookstate, none } from "@hookstate/core";
 import { addDoc, collection } from "firebase/firestore";
 import { useAuth } from "../../../context/AuthContext";
@@ -8,9 +8,35 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { v4 } from "uuid";
 import Compressor from "compressorjs";
 
-interface Props {}
+const forStatementRegex = /^for\b/;
+const unitList = [
+  "teaspoons",
+  "tablespoons",
+  "tbsp",
+  "tablespoon",
+  "cup",
+  "gram",
+  "kilogram",
+  "teaspoon",
+  "tsp",
+  "liter",
+  "lb",
+  "pound",
+  "container",
+  "gallon",
+  "quart",
+  "pint",
+  "fl oz",
+  "oz",
+  "ounces",
+  "handful",
+  "dash",
+  "milliters",
+];
+const unitRegex = new RegExp("\\b(" + unitList.join("|") + ")\\b", "g");
 
-const RecipeInputSidebarFunctions: React.FC<Props> = ({}) => {
+const RecipeInputSidebarFunctions = () => {
+  const [urlToScrape, setUrlToScrape] = useState<string>("");
   const state = useHookstate(store);
   const { user } = useAuth();
 
@@ -120,6 +146,289 @@ const RecipeInputSidebarFunctions: React.FC<Props> = ({}) => {
     }
   };
 
+  const jsonldInstructionParser = (json: any) => {
+    const recipeInstructions: any = [];
+    const recipeSteps: any = [];
+    const recipeIngredients: any = [];
+
+    const getRecipeInstructions = (json: any) => {
+      if (Array.isArray(json)) {
+        json.forEach((element) => getRecipeInstructions(element));
+      } else if ("@graph" in json) {
+        json["@graph"].forEach((element: Object) =>
+          getRecipeInstructions(element)
+        );
+      } else if (json["@type"].includes("Recipe")) {
+        json["recipeInstructions"].forEach((element: Object) =>
+          recipeInstructions.push(element)
+        );
+      }
+    };
+
+    const getRecipeSteps = (recipeInstructions: any) => {
+      recipeInstructions.forEach((element: any) => {
+        if (element["@type"].includes("HowToSection")) {
+          element.itemListElement.forEach((listItem: any) => {
+            recipeSteps.push(listItem.text);
+          });
+        } else if (element["@type"].includes("HowToStep")) {
+          recipeSteps.push(element.text);
+        }
+      });
+    };
+
+    const getRecipeIngredients = (json: any) => {
+      if (Array.isArray(json)) {
+        json.forEach((element) => getRecipeIngredients(element));
+      } else if ("@graph" in json) {
+        json["@graph"].forEach((element: Object) =>
+          getRecipeIngredients(element)
+        );
+      } else if (json["@type"].includes("Recipe")) {
+        json["recipeIngredient"].forEach((element: Object) =>
+          recipeIngredients.push(element)
+        );
+      }
+    };
+
+    const getMiscInfo = (json: any) => {
+      if (Array.isArray(json)) {
+        json.forEach((element) => getMiscInfo(element));
+      } else if ("@graph" in json) {
+        json["@graph"].forEach((element: Object) => getMiscInfo(element));
+      } else if (json["@type"].includes("Recipe")) {
+        if (json["description"]) {
+          state.inputRecipe.briefDescription.set(json["description"]);
+        }
+        if (json["name"]) {
+          state.inputRecipe.recipeName.set(json["name"]);
+        }
+      }
+    };
+
+    getRecipeInstructions(json);
+    getRecipeSteps(recipeInstructions);
+    getMiscInfo(json);
+    return recipeSteps;
+  };
+
+  const jsonldIngredientParser = (json: any) => {
+    const recipeIngredients: any = [];
+
+    const getRecipeIngredients = (json: any) => {
+      if (Array.isArray(json)) {
+        json.forEach((element) => getRecipeIngredients(element));
+      } else if ("@graph" in json) {
+        json["@graph"].forEach((element: Object) =>
+          getRecipeIngredients(element)
+        );
+      } else if (json["@type"].includes("Recipe")) {
+        json["recipeIngredient"].forEach((element: Object) =>
+          recipeIngredients.push(element)
+        );
+      }
+    };
+
+    getRecipeIngredients(json);
+    return recipeIngredients;
+  };
+
+  const runScrape = () => {
+    fetch("/api/scraper", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({ url: urlToScrape }),
+    })
+      .then((res) => res.json())
+      .then((metaData) => {
+        const object = JSON.parse(metaData);
+        const recipeIngredients = jsonldIngredientParser(object);
+        const recipeInstructions = jsonldInstructionParser(object);
+        handleIngredientSplit(recipeIngredients);
+        handleRecipeStepSplit(recipeInstructions);
+      });
+  };
+
+  const handleRecipeStepSplit = (tempArray: string[]) => {
+    // takes input in the recipe input, trims any whitespace at the ends, and then splits for every new line
+    // initialize variables
+    let firstStep = true;
+    let firstBlock = true;
+    let counter = 0;
+    let tempRecipeStepSplitList: StepBlock[] = [
+      {
+        for: "",
+        steps: [
+          {
+            stepNumber: 1,
+            stepText: "",
+          },
+        ],
+        blockNumber: 0,
+      },
+    ];
+    // loop through the input, now seperated by page return
+    for (var i = 0; i < tempArray.length; i++) {
+      if (
+        // if the first word of the current string is 'for' and it ends in a column...
+        tempArray[i].toLowerCase().match(forStatementRegex) &&
+        tempArray[i].match(/\:$/)
+      ) {
+        // if this is the first 'for', set the statement to the 'for' property of the first block
+        if (firstBlock === true) {
+          tempRecipeStepSplitList[0] = {
+            for: tempArray[i],
+            steps: [
+              {
+                stepNumber: 1,
+                stepText: "",
+              },
+            ],
+            blockNumber: 0,
+          };
+          firstBlock = false;
+        } else {
+          // otherwise, set the statement as the 'for property of the second block, and all further statements
+          // untill the next for statement will be assigned to that block
+          counter++;
+          tempRecipeStepSplitList[counter] = {
+            for: tempArray[i],
+            steps: [
+              {
+                stepNumber: 1,
+                stepText: "",
+              },
+            ],
+            blockNumber: counter,
+          };
+          firstStep = true;
+        }
+      } else {
+        // if its the first step after a for loop, set the first step
+        if (firstStep === true) {
+          tempRecipeStepSplitList[counter].steps[0] = {
+            stepNumber: 1,
+            stepText: tempArray[i],
+          };
+          firstStep = false;
+        } else {
+          // otherwise, continue to add to the current block
+          tempRecipeStepSplitList[counter].steps[
+            tempRecipeStepSplitList[counter].steps.length
+          ] = {
+            stepNumber: tempRecipeStepSplitList[counter].steps.length + 1,
+            stepText: tempArray[i],
+          };
+        }
+      }
+    }
+    state.inputRecipe.stepList.set(tempRecipeStepSplitList);
+  };
+
+  const handleIngredientSplit = (tempArray: string[]) => {
+    let tempAmount = "";
+    let tempUnit: any = "";
+    let tempName = "";
+    let firstIngredient = true;
+    let firstBlock = true;
+    let counter = 0;
+    let tempIngredientSplitList: IngredientBlock[] = [
+      {
+        for: "",
+        ingredients: [
+          {
+            amount: "",
+            id: 1,
+            name: "",
+            unit: "",
+          },
+        ],
+        blockNumber: 0,
+      },
+    ];
+    for (var i = 0; i < tempArray.length; i++) {
+      if (
+        tempArray[i].toLowerCase().match(forStatementRegex) &&
+        tempArray[i].match(/\:$/)
+      ) {
+        if (firstBlock === true) {
+          tempIngredientSplitList[0] = {
+            for: tempArray[i],
+            ingredients: [
+              {
+                amount: "",
+                id: 1,
+                name: "",
+                unit: "",
+              },
+            ],
+            blockNumber: 0,
+          };
+          firstBlock = false;
+        } else {
+          counter++;
+          tempIngredientSplitList[counter] = {
+            for: tempArray[i],
+            ingredients: [
+              {
+                amount: "",
+                id: 1,
+                name: "",
+                unit: "",
+              },
+            ],
+            blockNumber: counter,
+          };
+          firstIngredient = true;
+        }
+      } else {
+        if (firstIngredient === true) {
+          var match: any = tempArray[i].match(/[A-Za-z]/);
+          var index = tempArray[i].indexOf(match[0]);
+          tempAmount = tempArray[i].substring(0, index).trim();
+          if (tempArray[i].match(unitRegex)) {
+            const temp: any = tempArray[i].match(unitRegex);
+            tempUnit = temp[0];
+            index = index + tempUnit.length;
+          } else {
+            tempUnit = "";
+          }
+          tempName = tempArray[i].substring(index, tempArray[i].length).trim();
+          tempIngredientSplitList[counter].ingredients[0] = {
+            amount: tempAmount,
+            unit: tempUnit,
+            name: tempName,
+            id: 1,
+          };
+          firstIngredient = false;
+        } else {
+          var match: any = tempArray[i].match(/[A-Za-z]/);
+          var index = tempArray[i].indexOf(match[0]);
+          tempAmount = tempArray[i].substring(0, index).trim();
+          if (tempArray[i].match(unitRegex)) {
+            const temp: any = tempArray[i].match(unitRegex);
+            tempUnit = temp[0];
+            index = index + tempUnit.length;
+          } else {
+            tempUnit = "";
+          }
+          tempName = tempArray[i].substring(index, tempArray[i].length).trim();
+          tempIngredientSplitList[counter].ingredients[
+            tempIngredientSplitList[counter].ingredients.length
+          ] = {
+            amount: tempAmount,
+            unit: tempUnit,
+            name: tempName,
+            id: tempIngredientSplitList[counter].ingredients.length + 1,
+          };
+        }
+      }
+    }
+    state.inputRecipe.ingredientList.set(tempIngredientSplitList);
+  };
+
   return (
     <div>
       <button onClick={addNewStepBlock}>Add New Step Block</button>
@@ -135,6 +444,11 @@ const RecipeInputSidebarFunctions: React.FC<Props> = ({}) => {
       <button onClick={uploadRecipe}>Upload Recipe</button>
 
       <input type="file" onChange={handleImgPreview}></input>
+      <textarea
+        onChange={(e) => setUrlToScrape(e.target.value)}
+        value={urlToScrape}
+      />
+      <button onClick={runScrape}>Run Scrape</button>
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import React from "react";
-import { useHookstate, none } from "@hookstate/core";
+import { useHookstate } from "@hookstate/core";
 import { store } from "../util/store";
 import { useAuth } from "../../context/AuthContext";
 import styled from "styled-components";
@@ -13,16 +13,26 @@ export const Main_Input_Component = styled.div`
   grid-template-columns: 1 fr 2fr;
 `;
 
-export const Input_Ingredient_Block = styled.ul`
+export const Input_Ingredient_List = styled.ul`
   border: 1px;
   border-style: solid;
   grid-column: 1 / 2;
+  padding: 20px;
 `;
 
-export const Input_Step_Block = styled.ul`
+export const Input_Step_List = styled.ul`
   border: 1px;
   border-style: solid;
   grid-column: 2;
+  padding: 20px;
+`;
+
+const Input_Step_Block = styled.li`
+  padding: 5px;
+`;
+
+const Input_Ingredient_Block = styled.li`
+  padding: 5px;
 `;
 
 const RecipeInputMainContainer = () => {
@@ -33,33 +43,31 @@ const RecipeInputMainContainer = () => {
     .get()
     .map((stepBlock) => {
       return (
-        <li key={stepBlock.blockNumber}>
+        <Input_Step_Block key={stepBlock.blockNumber}>
           <RecipeInputStepBlock
             inputStepBlock={stepBlock}
             key={stepBlock.blockNumber}
           />
-        </li>
+        </Input_Step_Block>
       );
     });
   const listInputIngredientBlocks = state.inputRecipe.ingredientList
     .get()
     .map((ingredientBlock) => {
       return (
-        <li key={ingredientBlock.blockNumber}>
+        <Input_Ingredient_Block key={ingredientBlock.blockNumber}>
           <RecipeInputIngredientBlock
             inputIngredientBlock={ingredientBlock}
             key={ingredientBlock.blockNumber}
           />
-        </li>
+        </Input_Ingredient_Block>
       );
     });
 
   return (
     <Main_Input_Component>
-      <Input_Ingredient_Block>
-        {listInputIngredientBlocks}
-      </Input_Ingredient_Block>
-      <Input_Step_Block>{listInputStepBlocks}</Input_Step_Block>
+      <Input_Ingredient_List>{listInputIngredientBlocks}</Input_Ingredient_List>
+      <Input_Step_List>{listInputStepBlocks}</Input_Step_List>
     </Main_Input_Component>
   );
 };

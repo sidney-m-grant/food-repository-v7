@@ -31,6 +31,10 @@ const Input_Header_Parent_Container = styled.div`
   vertical-align: top;
 `;
 
+const Input_Brief_Description_Text_Area = styled.textarea`
+  vertical-align: bottom;
+`;
+
 const RecipeInputHeader = () => {
   const state = useHookstate(store);
 
@@ -82,11 +86,11 @@ const RecipeInputHeader = () => {
           placeholder="source..."
           value={state.inputRecipe.source.get()}
         ></input>
-        <textarea
+        <Input_Brief_Description_Text_Area
           onChange={handleBriefDescriptionChange}
           placeholder="brief description..."
           value={state.inputRecipe.briefDescription.get()}
-        ></textarea>
+        ></Input_Brief_Description_Text_Area>
         <input
           onChange={handleNewCookbookInputChange}
           placeholder="cookbook..."
