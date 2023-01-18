@@ -141,15 +141,49 @@ const inputRecipe: Recipe = {
   ],
 };
 
+const socialRecipe: Recipe = {
+  recipeName: "",
+  servesAmount: "",
+  source: "",
+  briefDescription: "",
+  cookBook: "",
+  imgPath: "",
+  stepList: [
+    {
+      for: "",
+      steps: [
+        {
+          stepNumber: 1,
+          stepText: "",
+        },
+      ],
+      blockNumber: 0,
+    },
+  ],
+  ingredientList: [
+    {
+      for: "",
+      ingredients: [
+        {
+          amount: "",
+          id: 1,
+          name: "",
+          unit: "",
+        },
+      ],
+      blockNumber: 0,
+    },
+  ],
+};
+
 const allRecipes: Recipe[] = [];
 
 export const store = hookstate({
   currentRecipe: currentRecipe,
   editedRecipe: editedRecipe,
   inputRecipe: inputRecipe,
+  socialRecipe: socialRecipe,
   editedImagePreview: "",
   inputImagePreview: "",
-  friendRequestList: [],
-  listOfFriends: [],
   allRecipes: allRecipes,
 });
