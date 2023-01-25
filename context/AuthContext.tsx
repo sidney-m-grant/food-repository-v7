@@ -46,6 +46,7 @@ export const AuthContextProvider = ({
   const logOut = async () => {
     setUser(null);
     await signOut(auth);
+    window.location.reload();
   };
 
   return (

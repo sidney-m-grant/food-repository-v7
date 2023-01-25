@@ -35,25 +35,25 @@ const RecipeEditHeader = () => {
   const handleServesAmountChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    state.inputRecipe.servesAmount.set(e.target.value);
+    state.editedRecipe.servesAmount.set(e.target.value);
   };
 
   const handleBriefDescriptionChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    state.inputRecipe.briefDescription.set(e.target.value);
+    state.editedRecipe.briefDescription.set(e.target.value);
   };
 
   const handleSourceChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    state.inputRecipe.source.set(e.target.value);
+    state.editedRecipe.source.set(e.target.value);
   };
 
   const handleNewCookbookInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    state.inputRecipe.cookBook.set(e.target.value);
+    state.editedRecipe.cookBook.set(e.target.value);
   };
 
   return (

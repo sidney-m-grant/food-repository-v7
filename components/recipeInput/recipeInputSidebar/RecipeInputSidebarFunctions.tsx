@@ -258,7 +258,6 @@ const RecipeInputSidebarFunctions = () => {
         }
       }
     };
-
     getRecipeInstructions(json);
     getRecipeSteps(recipeInstructions);
     getMiscInfo(json);
@@ -517,7 +516,7 @@ const RecipeInputSidebarFunctions = () => {
         ></input>
         <button onClick={addNewTag}>Add Tag</button>
         <h5>List of Current Tags:</h5>
-        <ol>{tagListMap}</ol>
+        {state.inputRecipe.tags.get() ? <ol>{tagListMap}</ol> : null}
       </Tag_List_Container>
     </div>
   );

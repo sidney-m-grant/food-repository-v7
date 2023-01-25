@@ -205,7 +205,7 @@ const RecipeEditSidebarFunctions: React.FC<Props> = ({
         ></input>
         <button onClick={addNewTag}>Add Tag</button>
         <h5>List of Current Tags:</h5>
-        <ol>{tagListMap}</ol>
+        {state.editedRecipe.tags.get() ? <ol>{tagListMap}</ol> : null}
       </Tag_List_Container>
     </div>
   );

@@ -167,7 +167,7 @@ const SocialSidebar = () => {
           Cookbooks
         </Social_Sidebar_Label>
       ) : null}
-      {openSubMenu === "cookBooks" ? (
+      {openSubMenu === "cookBooks" && cookbookList ? (
         <SocialCookbookComponent
           setSelectedCookbook={setSelectedCookbook}
           selectedCookbook={selectedCookbook}

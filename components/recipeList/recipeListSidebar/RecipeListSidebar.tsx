@@ -123,7 +123,7 @@ const RecipeListSidebar = () => {
       <Recipe_List_Sidebar_Label onClick={handleCookbooksClick}>
         Cook Books
       </Recipe_List_Sidebar_Label>
-      {openSubMenu === "cookBooks" ? (
+      {openSubMenu === "cookBooks" && cookbookList ? (
         <RecipeListCookbookComponent
           allRecipes={allRecipes}
           setSelectedCookbook={setSelectedCookbook}

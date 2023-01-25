@@ -33,8 +33,6 @@ const RecipeListCookbookComponent: React.FC<Props> = ({
     );
   });
 
-
-
   return <Cookbook_List>{listOfCookbooks}</Cookbook_List>;
 };
 
