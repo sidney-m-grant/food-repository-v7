@@ -7,10 +7,11 @@ export const Edit_Header_Container = styled.div`
   border: 1px;
   border-style: solid;
   width: calc(100% - 150px);
-  align-items: center;
-  justify-content: center;
   height: 150px;
-  display: inline-flexbox;
+  display: inline-flex;
+  flex-wrap: wrap;
+  row-gap: 0px;
+  justify-content: center;
 `;
 
 const Edit_Image = styled.div`
@@ -23,12 +24,9 @@ const Edit_Image = styled.div`
   vertical-align: top;
 `;
 
-const Edit_Header_Parent_Container = styled.div`
-  border: 1px;
-  border-style: solid;
-  display: inline-block;
-  width: 100%;
-  vertical-align: top;
+const Edit_Brief_Description_Text_Area = styled.textarea`
+  vertical-align: bottom;
+  width: calc(100% - 150px);
 `;
 
 const RecipeEditHeader = () => {
@@ -59,7 +57,7 @@ const RecipeEditHeader = () => {
   };
 
   return (
-    <Edit_Header_Parent_Container>
+    <>
       <Edit_Header_Container>
         <span>{state.editedRecipe.recipeName.get()}</span>
         <input
@@ -72,16 +70,17 @@ const RecipeEditHeader = () => {
           placeholder="source..."
           value={state.editedRecipe.source.get()}
         ></input>
-        <textarea
-          onChange={handleBriefDescriptionChange}
-          placeholder="brief description..."
-          value={state.editedRecipe.briefDescription.get()}
-        ></textarea>
         <input
           onChange={handleNewCookbookInputChange}
           placeholder="cookbook..."
           value={state.editedRecipe.cookBook.get()}
         ></input>
+        <br></br>
+        <Edit_Brief_Description_Text_Area
+          onChange={handleBriefDescriptionChange}
+          placeholder="brief description..."
+          value={state.editedRecipe.briefDescription.get()}
+        ></Edit_Brief_Description_Text_Area>
       </Edit_Header_Container>
       <Edit_Image>
         {state.editedImagePreview.get() ? (
@@ -91,7 +90,7 @@ const RecipeEditHeader = () => {
           ></img>
         ) : null}
       </Edit_Image>
-    </Edit_Header_Parent_Container>
+    </>
   );
 };
 

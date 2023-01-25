@@ -5,10 +5,15 @@ export const Nav_Bar = styled.div`
   position: fixed;
   top: 0;
   width: 100%;
-  display: block;
+  padding: 5px;
+  display: flex;
   height: 30px;
   border: 1px;
   border-style: solid;
+  z-index: 1;
+  background-color: aliceblue;
+  justify-content: center;
+  column-gap: 10px;
 `;
 
 import { useRouter } from "next/router";

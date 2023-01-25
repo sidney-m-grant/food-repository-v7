@@ -7,10 +7,11 @@ export const Current_Recipe_Header_Container = styled.div`
   border: 1px;
   border-style: solid;
   width: calc(100% - 150px);
-  align-items: center;
-  justify-content: center;
   height: 150px;
-  display: inline-flexbox;
+  display: inline-flex;
+  flex-wrap: wrap;
+  row-gap: 0px;
+  justify-content: center;
 `;
 
 const Current_Recipe_Image = styled.div`
@@ -23,25 +24,39 @@ const Current_Recipe_Image = styled.div`
   vertical-align: top;
 `;
 
-const Current_Recipe_Header_Parent_Container = styled.div`
-  border: 1px;
-  border-style: solid;
+const Current_Recipe_Header_Element = styled.div`
+  height: 30px;
   display: inline-block;
+  border: 1px solid;
+  min-width: 250px;
+`;
+
+const Current_Recipe_Header_Brief_Description_Element = styled.div`
+  border: 1px solid;
   width: 100%;
-  vertical-align: top;
+  height: calc(100% - 30px);
 `;
 
 const CurrentRecipeHeader = () => {
   const state = useHookstate(store);
   return (
-    <Current_Recipe_Header_Parent_Container>
+    <>
       <Current_Recipe_Header_Container>
-        <span>Name: {state.currentRecipe.recipeName.get()}</span>
-        <span>Serves: {state.currentRecipe.servesAmount.get()}</span>
-        <span>Source: {state.currentRecipe.source.get()}</span>
-        <span>
-          Brief Description: {state.currentRecipe.briefDescription.get()}
-        </span>
+        <div>
+          <Current_Recipe_Header_Element>
+            <span>Name: {state.currentRecipe.recipeName.get()}</span>
+          </Current_Recipe_Header_Element>
+          <Current_Recipe_Header_Element>
+            <span>Serves: {state.currentRecipe.servesAmount.get()}</span>
+          </Current_Recipe_Header_Element>
+          <Current_Recipe_Header_Element>
+            <span>Source: {state.currentRecipe.source.get()}</span>
+          </Current_Recipe_Header_Element>
+        </div>
+        <br></br>
+        <Current_Recipe_Header_Brief_Description_Element>
+          <p>Brief Description: {state.currentRecipe.briefDescription.get()}</p>
+        </Current_Recipe_Header_Brief_Description_Element>
       </Current_Recipe_Header_Container>
       <Current_Recipe_Image>
         <img
@@ -49,7 +64,7 @@ const CurrentRecipeHeader = () => {
           style={{ height: 150, width: 150 }}
         ></img>
       </Current_Recipe_Image>
-    </Current_Recipe_Header_Parent_Container>
+    </>
   );
 };
 

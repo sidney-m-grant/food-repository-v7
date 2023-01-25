@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { store, StepBlock, IngredientBlock } from "../../util/store";
+import { store, StepBlock, IngredientBlock, Tag } from "../../util/store";
 import { useHookstate, none } from "@hookstate/core";
 import { addDoc, collection } from "firebase/firestore";
 import { useAuth } from "../../../context/AuthContext";
@@ -7,6 +7,23 @@ import { db, storage } from "../../../config/firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { v4 } from "uuid";
 import Compressor from "compressorjs";
+import { XCircle } from "@styled-icons/boxicons-regular/XCircle";
+import styled from "styled-components";
+
+const Tag_List_Container = styled.div`
+  border: 1px solid;
+  padding: 3px;
+`;
+
+const Main_Recipe_Edit_Tools = styled.div`
+  border: 1px solid;
+  padding: 3px;
+`;
+
+const Scraper_Container = styled.div`
+  border: 1px solid;
+  padding: 3px;
+`;
 
 const forStatementRegex = /^for\b/;
 const unitList = [
@@ -15,6 +32,7 @@ const unitList = [
   "tbsp",
   "tablespoon",
   "cup",
+  "cups",
   "gram",
   "kilogram",
   "teaspoon",
@@ -37,10 +55,45 @@ const unitRegex = new RegExp("\\b(" + unitList.join("|") + ")\\b", "g");
 
 const RecipeInputSidebarFunctions = () => {
   const [urlToScrape, setUrlToScrape] = useState<string>("");
+  const [tagAddInput, setTagAddInput] = useState<string>("");
   const state = useHookstate(store);
   const { user } = useAuth();
 
   const [tempImageFile, setTempImageFile] = useState<File | null>(null);
+
+  const addNewTag = () => {
+    if (!tagAddInput) {
+      return;
+    }
+    const length = state.inputRecipe.tags.get().length;
+    for (let i = 0; i < length; i++) {
+      if (tagAddInput === state.inputRecipe.tags[i].text.get()) {
+        return;
+      }
+    }
+    const tempObject: Tag = {
+      text: tagAddInput,
+      id: length,
+    };
+    state.inputRecipe.tags[length].set(tempObject);
+    setTagAddInput("");
+  };
+
+  const deleteTag = (id: number) => {
+    state.inputRecipe.tags[id].set(none);
+    for (let i = id; i < state.inputRecipe.tags.get().length; i++) {
+      state.inputRecipe.tags[i].id.set((p) => p - 1);
+    }
+  };
+
+  const tagListMap = state.inputRecipe.tags.get().map((tag) => {
+    return (
+      <li key={tag.id}>
+        {tag.text}
+        <XCircle size={15} onClick={() => deleteTag(tag.id)}></XCircle>
+      </li>
+    );
+  });
 
   const addNewStepBlock = () => {
     const length = state.inputRecipe.stepList.length;
@@ -239,10 +292,11 @@ const RecipeInputSidebarFunctions = () => {
       headers: {
         "content-type": "application/json",
       },
-      body: JSON.stringify({ url: urlToScrape }),
+      body: JSON.stringify({ url: urlToScrape }, undefined, 4),
     })
       .then((res) => res.json())
       .then((metaData) => {
+        console.log(metaData);
         const object = JSON.parse(metaData);
         const recipeIngredients = jsonldIngredientParser(object);
         const recipeInstructions = jsonldInstructionParser(object);
@@ -431,24 +485,40 @@ const RecipeInputSidebarFunctions = () => {
 
   return (
     <div>
-      <button onClick={addNewStepBlock}>Add New Step Block</button>
+      <Main_Recipe_Edit_Tools>
+        <h5>Recipe Tools:</h5>
+        <button onClick={addNewStepBlock}>Add New Step Block</button>
 
-      <button onClick={addNewIngredientBlock}>Add New Ingredient Block</button>
+        <button onClick={addNewIngredientBlock}>
+          Add New Ingredient Block
+        </button>
 
-      <button onClick={deleteLastStepBlock}>Delete Last Step Block</button>
+        <button onClick={deleteLastStepBlock}>Delete Last Step Block</button>
 
-      <button onClick={deleteLastIngredientBlock}>
-        Delete Last Ingredient Block
-      </button>
+        <button onClick={deleteLastIngredientBlock}>
+          Delete Last Ingredient Block
+        </button>
+        <button onClick={uploadRecipe}>Upload Recipe</button>
 
-      <button onClick={uploadRecipe}>Upload Recipe</button>
-
-      <input type="file" onChange={handleImgPreview}></input>
-      <textarea
-        onChange={(e) => setUrlToScrape(e.target.value)}
-        value={urlToScrape}
-      />
-      <button onClick={runScrape}>Run Scrape</button>
+        <input type="file" onChange={handleImgPreview}></input>
+      </Main_Recipe_Edit_Tools>
+      <Scraper_Container>
+        <h5>Recipe Scraper:</h5>
+        <textarea
+          onChange={(e) => setUrlToScrape(e.target.value)}
+          value={urlToScrape}
+        />
+        <button onClick={runScrape}>Run Scrape</button>
+      </Scraper_Container>
+      <Tag_List_Container>
+        <input
+          onChange={(e) => setTagAddInput(e.target.value)}
+          value={tagAddInput}
+        ></input>
+        <button onClick={addNewTag}>Add Tag</button>
+        <h5>List of Current Tags:</h5>
+        <ol>{tagListMap}</ol>
+      </Tag_List_Container>
     </div>
   );
 };

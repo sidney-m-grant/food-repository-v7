@@ -44,6 +44,9 @@ const RecipeInputIngredientBlock: React.FC<Props> = ({
     const length =
       state.inputRecipe.ingredientList[inputIngredientBlock.blockNumber]
         .ingredients.length - 1;
+    if (length === 0) {
+      return;
+    }
     state.inputRecipe.ingredientList[
       inputIngredientBlock.blockNumber
     ].ingredients[length].set(none);

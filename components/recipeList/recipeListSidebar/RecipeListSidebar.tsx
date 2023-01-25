@@ -7,8 +7,9 @@ import { db } from "../../../config/firebase";
 import styled from "styled-components";
 import RecipeListCookbookComponent from "./recipeListCookbook/RecipeListCookbookComponent";
 import RecipeListSearchComponent from "./RecipeListSearchComponent";
+import RecipeListTags from "./recipeListTags/RecipeListTags";
 
-type OpenSubMenu = "search" | "cookBooks" | "";
+type OpenSubMenu = "search" | "cookBooks" | "tags" | "";
 
 const Recipe_List_Sidebar_Container = styled.div`
   width: 250px;
@@ -33,14 +34,17 @@ const Recipe_List_Sidebar_Label = styled.span`
 const RecipeListSidebar = () => {
   const [allRecipes, setAllRecipes] = useState<Recipe[]>([]);
   const [openSubMenu, setOpenSubMenu] = useState<OpenSubMenu>("");
-  const [cookbookList, setCookbookList] = useState([]);
+  const [cookbookList, setCookbookList] = useState<string[]>([]);
   const [selectedCookbook, setSelectedCookbook] = useState<string>("");
+  const [selectedTag, setSelectedTag] = useState<string>("");
+  const [tagList, setTagList] = useState<string[]>([]);
   const { user } = useAuth();
   const state = useHookstate(store);
 
   useEffect(() => {
     const getRecipes = async () => {
-      const cookbookList: any = [];
+      const tempCookbookList: any = [];
+      const tempTagList: any = [];
       const recipes = await getDocs(
         collection(db, user?.email, "recipeCollection", "recipes")
       );
@@ -60,15 +64,24 @@ const RecipeListSidebar = () => {
           source: recipe.source,
           briefDescription: recipe.briefDescription,
           cookBook: recipe.cookBook,
+          tags: recipe.tags,
         };
         recipeArray.push(temp);
-        if (!cookbookList.includes(recipe.cookBook)) {
-          cookbookList.push(recipe.cookBook);
+        if (!tempCookbookList.includes(recipe.cookBook) && recipe.cookBook) {
+          tempCookbookList.push(recipe.cookBook);
+        }
+        if (recipe.tags) {
+          for (let i = 0; i < recipe.tags.length; i++) {
+            if (!tempTagList.includes(recipe.tags[i].text)) {
+              tempTagList.push(recipe.tags[i].text);
+            }
+          }
         }
       });
       setAllRecipes(recipeArray);
       state.allRecipes.set(recipeArray);
-      setCookbookList(cookbookList);
+      setCookbookList(tempCookbookList);
+      setTagList(tempTagList);
     };
     getRecipes();
   }, [user?.email]);
@@ -85,6 +98,14 @@ const RecipeListSidebar = () => {
   const handleCookbooksClick = () => {
     if (openSubMenu !== "cookBooks") {
       setOpenSubMenu("cookBooks");
+    } else {
+      setOpenSubMenu("");
+    }
+  };
+
+  const handleTagsClick = () => {
+    if (openSubMenu !== "tags") {
+      setOpenSubMenu("tags");
     } else {
       setOpenSubMenu("");
     }
@@ -109,6 +130,18 @@ const RecipeListSidebar = () => {
           selectedCookbook={selectedCookbook}
           cookbookList={cookbookList}
         />
+      ) : null}
+      <br></br>
+      <Recipe_List_Sidebar_Label onClick={handleTagsClick}>
+        Tags
+      </Recipe_List_Sidebar_Label>
+      {openSubMenu === "tags" ? (
+        <RecipeListTags
+          setSelectedTag={setSelectedTag}
+          selectedTag={selectedTag}
+          tagList={tagList}
+          allRecipes={allRecipes}
+        ></RecipeListTags>
       ) : null}
     </Recipe_List_Sidebar_Container>
   );

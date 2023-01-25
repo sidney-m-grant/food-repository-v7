@@ -7,7 +7,7 @@ export default async (req, res) => {
     try {
       const { data } = await axios.get(url);
       const $ = cheerio.load(data);
-      const metaData = $('script[type="application/ld+json"]').text();
+      const metaData = $('script[type="application/ld+json"]:first').text();
       res.status(200).json(metaData);
     } catch (e) {
       res.statusCode = 404;

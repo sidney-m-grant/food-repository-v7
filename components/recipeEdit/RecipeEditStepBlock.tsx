@@ -34,6 +34,9 @@ const RecipeEditStepBlock: React.FC<Props> = ({ editStepBlock }) => {
   const handleDeleteLastStep = () => {
     const length =
       state.editedRecipe.stepList[editStepBlock.blockNumber].steps.length - 1;
+    if (length === 0) {
+      return;
+    }
     state.editedRecipe.stepList[editStepBlock.blockNumber].steps[length].set(
       none
     );

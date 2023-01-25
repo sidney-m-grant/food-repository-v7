@@ -8,8 +8,9 @@ import { useAuth } from "../../../context/AuthContext";
 import { useHookstate } from "@hookstate/core";
 import RecipeEditCookbookComponent from "./recipeEditCookbook/RecipeEditCookbookComponent";
 import RecipeEditSearchComponent from "./RecipeEditSearchComponent";
+import RecipeEditTags from "./recipeEditTags/RecipeEditTags";
 
-type OpenSubMenu = "search" | "cookBooks" | "editTools" | "";
+type OpenSubMenu = "search" | "cookBooks" | "editTools" | "tags" | "";
 
 const Recipe_Edit_Sidebar_Container = styled.div`
   width: 250px;
@@ -38,6 +39,8 @@ const RecipeEditSidebar = () => {
   const [cookbookList, setCookbookList] = useState<string[]>([]);
   const [openSubMenu, setOpenSubMenu] = useState<OpenSubMenu>("");
   const [selectedCookbook, setSelectedCookbook] = useState<string>("");
+  const [selectedTag, setSelectedTag] = useState<string>("");
+  const [tagList, setTagList] = useState<string[]>([]);
   const [tempImageFile, setTempImageFile] = useState<File | null>(null);
 
   useEffect(() => {
@@ -49,6 +52,8 @@ const RecipeEditSidebar = () => {
         docId: doc.id,
         ...doc.data(),
       }));
+      const tempCookbookList: string[] = [];
+      const tempTagList: string[] = [];
       const recipeArray: Recipe[] = [];
       tempArray.forEach((recipe: Recipe) => {
         const temp: Recipe = {
@@ -61,15 +66,24 @@ const RecipeEditSidebar = () => {
           source: recipe.source,
           briefDescription: recipe.briefDescription,
           cookBook: recipe.cookBook,
+          tags: recipe.tags,
         };
         recipeArray.push(temp);
-        if (!cookbookList.includes(recipe.cookBook)) {
-          cookbookList.push(recipe.cookBook);
+        if (!tempCookbookList.includes(recipe.cookBook) && recipe.cookBook) {
+          tempCookbookList.push(recipe.cookBook);
+        }
+        if (recipe.tags) {
+          for (let i = 0; i < recipe.tags.length; i++) {
+            if (!tempTagList.includes(recipe.tags[i].text)) {
+              tempTagList.push(recipe.tags[i].text);
+            }
+          }
         }
       });
       setAllRecipes(recipeArray);
       state.allRecipes.set(recipeArray);
-      setCookbookList(cookbookList);
+      setCookbookList(tempCookbookList);
+      setTagList(tempTagList);
     };
     getRecipes();
   }, [user?.email]);
@@ -94,6 +108,14 @@ const RecipeEditSidebar = () => {
   const handleEditToolsClick = () => {
     if (openSubMenu !== "editTools") {
       setOpenSubMenu("editTools");
+    } else {
+      setOpenSubMenu("");
+    }
+  };
+
+  const handleTagsClick = () => {
+    if (openSubMenu !== "tags") {
+      setOpenSubMenu("tags");
     } else {
       setOpenSubMenu("");
     }
@@ -132,6 +154,19 @@ const RecipeEditSidebar = () => {
           cookbookList={cookbookList}
           setTempImageFile={setTempImageFile}
         />
+      ) : null}
+      <br></br>
+      <Recipe_Edit_Sidebar_Label onClick={handleTagsClick}>
+        Tags
+      </Recipe_Edit_Sidebar_Label>
+      {openSubMenu === "tags" ? (
+        <RecipeEditTags
+          setSelectedTag={setSelectedTag}
+          selectedTag={selectedTag}
+          tagList={tagList}
+          allRecipes={allRecipes}
+          setTempImageFile={setTempImageFile}
+        ></RecipeEditTags>
       ) : null}
     </Recipe_Edit_Sidebar_Container>
   );

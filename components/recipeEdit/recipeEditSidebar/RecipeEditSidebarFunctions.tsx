@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { store } from "../../util/store";
+import { store, Tag } from "../../util/store";
 import { useHookstate, none } from "@hookstate/core";
 import { setDoc, doc } from "firebase/firestore";
 import { useAuth } from "../../../context/AuthContext";
@@ -12,6 +12,18 @@ import {
 } from "firebase/storage";
 import { v4 } from "uuid";
 import Compressor from "compressorjs";
+import { XCircle } from "@styled-icons/boxicons-regular/XCircle";
+import styled from "styled-components";
+
+const Tag_List_Container = styled.div`
+  border: 1px solid;
+  padding: 3px;
+`;
+
+const Main_Recipe_Edit_Tools = styled.div`
+  border: 1px solid;
+  padding: 3px;
+`;
 
 interface Props {
   tempImageFile: File | null;
@@ -23,7 +35,42 @@ const RecipeEditSidebarFunctions: React.FC<Props> = ({
   setTempImageFile,
 }) => {
   const state = useHookstate(store);
+  const [tagAddInput, setTagAddInput] = useState<string>("");
   const { user } = useAuth();
+
+  const addNewTag = () => {
+    if (!tagAddInput) {
+      return;
+    }
+    const length = state.editedRecipe.tags.get().length;
+    for (let i = 0; i < length; i++) {
+      if (tagAddInput === state.editedRecipe.tags[i].text.get()) {
+        return;
+      }
+    }
+    const tempObject: Tag = {
+      text: tagAddInput,
+      id: length,
+    };
+    state.editedRecipe.tags[length].set(tempObject);
+    setTagAddInput("");
+  };
+
+  const deleteTag = (id: number) => {
+    state.editedRecipe.tags[id].set(none);
+    for (let i = id; i < state.editedRecipe.tags.get().length; i++) {
+      state.editedRecipe.tags[i].id.set((p) => p - 1);
+    }
+  };
+
+  const tagListMap = state.editedRecipe.tags.get().map((tag) => {
+    return (
+      <li key={tag.id}>
+        {tag.text}
+        <XCircle size={20} onClick={() => deleteTag(tag.id)}></XCircle>
+      </li>
+    );
+  });
 
   const addNewStepBlock = () => {
     const length = state.editedRecipe.stepList.length;
@@ -133,19 +180,33 @@ const RecipeEditSidebarFunctions: React.FC<Props> = ({
 
   return (
     <div>
-      <button onClick={addNewStepBlock}>Add New Step Block</button>
+      <Main_Recipe_Edit_Tools>
+        <h5>Recipe Tools:</h5>
+        <button onClick={addNewStepBlock}>Add New Step Block</button>
 
-      <button onClick={addNewIngredientBlock}>Add New Ingredient Block</button>
+        <button onClick={addNewIngredientBlock}>
+          Add New Ingredient Block
+        </button>
 
-      <button onClick={deleteLastStepBlock}>Delete Last Step Block</button>
+        <button onClick={deleteLastStepBlock}>Delete Last Step Block</button>
 
-      <button onClick={deleteLastIngredientBlock}>
-        Delete Last Ingredient Block
-      </button>
+        <button onClick={deleteLastIngredientBlock}>
+          Delete Last Ingredient Block
+        </button>
 
-      <button onClick={uploadRecipe}>Upload Recipe</button>
+        <button onClick={uploadRecipe}>Upload Recipe</button>
 
-      <input type="file" onChange={handleImgPreview}></input>
+        <input type="file" onChange={handleImgPreview}></input>
+      </Main_Recipe_Edit_Tools>
+      <Tag_List_Container>
+        <input
+          onChange={(e) => setTagAddInput(e.target.value)}
+          value={tagAddInput}
+        ></input>
+        <button onClick={addNewTag}>Add Tag</button>
+        <h5>List of Current Tags:</h5>
+        <ol>{tagListMap}</ol>
+      </Tag_List_Container>
     </div>
   );
 };

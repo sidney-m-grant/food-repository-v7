@@ -1,11 +1,7 @@
 import React from "react";
 import { useHookstate } from "@hookstate/core";
 import { StepBlock, store, RecipeStep } from "../util/store";
-import styled from "styled-components";
-
-const Step_Text_Area = styled.textarea`
-  vertical-align: bottom;
-`;
+import TextareaAutosize from "react-textarea-autosize";
 
 interface Props {
   inputStep: RecipeStep;
@@ -23,12 +19,15 @@ const RecipeInputStep: React.FC<Props> = ({ inputStep, inputStepBlock }) => {
     ].stepText.set(e.target.value);
   };
   return (
-    <Step_Text_Area
+    <TextareaAutosize
       onChange={handleChange}
       value={state.inputRecipe.stepList[inputStepBlock.blockNumber].steps[
         inputStep.stepNumber - 1
       ].stepText.get()}
-    ></Step_Text_Area>
+      style={{ width: 500 }}
+      maxRows={10}
+      minRows={3}
+    ></TextareaAutosize>
   );
 };
 

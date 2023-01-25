@@ -13,7 +13,7 @@ interface Props {
   setOpenSubMenu: React.Dispatch<React.SetStateAction<OpenSubMenu>>;
 }
 
-type OpenSubMenu = "social" | "search" | "cookBooks" | "";
+type OpenSubMenu = "social" | "search" | "cookBooks" | "tags" | "";
 
 const Social_Item_Container = styled.ul`
   border: 1px solid;

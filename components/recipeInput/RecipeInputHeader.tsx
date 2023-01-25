@@ -7,10 +7,11 @@ export const Input_Header_Container = styled.div`
   border: 1px;
   border-style: solid;
   width: calc(100% - 150px);
-  align-items: center;
-  justify-content: center;
   height: 150px;
-  display: inline-flexbox;
+  display: inline-flex;
+  flex-wrap: wrap;
+  row-gap: 0px;
+  justify-content: center;
 `;
 
 const Input_Image = styled.div`
@@ -23,16 +24,9 @@ const Input_Image = styled.div`
   vertical-align: top;
 `;
 
-const Input_Header_Parent_Container = styled.div`
-  border: 1px;
-  border-style: solid;
-  display: inline-block;
-  width: 100%;
-  vertical-align: top;
-`;
-
 const Input_Brief_Description_Text_Area = styled.textarea`
   vertical-align: bottom;
+  width: calc(100% - 150px);
 `;
 
 const RecipeInputHeader = () => {
@@ -69,7 +63,7 @@ const RecipeInputHeader = () => {
   };
 
   return (
-    <Input_Header_Parent_Container>
+    <>
       <Input_Header_Container>
         <input
           onChange={handleNameChange}
@@ -86,16 +80,18 @@ const RecipeInputHeader = () => {
           placeholder="source..."
           value={state.inputRecipe.source.get()}
         ></input>
-        <Input_Brief_Description_Text_Area
-          onChange={handleBriefDescriptionChange}
-          placeholder="brief description..."
-          value={state.inputRecipe.briefDescription.get()}
-        ></Input_Brief_Description_Text_Area>
+
         <input
           onChange={handleNewCookbookInputChange}
           placeholder="cookbook..."
           value={state.inputRecipe.cookBook.get()}
         ></input>
+        <br></br>
+        <Input_Brief_Description_Text_Area
+          onChange={handleBriefDescriptionChange}
+          placeholder="brief description..."
+          value={state.inputRecipe.briefDescription.get()}
+        ></Input_Brief_Description_Text_Area>
       </Input_Header_Container>
       <Input_Image>
         {state.inputImagePreview.get() ? (
@@ -105,7 +101,7 @@ const RecipeInputHeader = () => {
           ></img>
         ) : null}
       </Input_Image>
-    </Input_Header_Parent_Container>
+    </>
   );
 };
 

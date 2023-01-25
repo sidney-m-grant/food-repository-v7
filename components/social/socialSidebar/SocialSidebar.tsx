@@ -7,8 +7,9 @@ import SocialSidebarFunctions from "./SocialSidebarFunctions";
 import SocialCookbookComponent from "./socialCookbook/SocialCookbookComponent";
 import { Recipe } from "../../util/store";
 import SocialSearchComponent from "./SocialSearchComponent";
+import SocialTags from "./socialTags/SocialTags";
 
-type OpenSubMenu = "social" | "search" | "cookBooks" | "";
+type OpenSubMenu = "social" | "search" | "cookBooks" | "tags" | "";
 
 const Social_Sidebar_Container = styled.div`
   width: 250px;
@@ -36,6 +37,8 @@ const SocialSidebar = () => {
   const [userFriendRequestList, setUserFriendRequestList] = useState<string[]>(
     []
   );
+  const [selectedTag, setSelectedTag] = useState<string>("");
+  const [tagList, setTagList] = useState<string[]>([]);
   const [openSubMenu, setOpenSubMenu] = useState<OpenSubMenu>("");
   const [cookbookList, setCookbookList] = useState([]);
   const [selectedCookbook, setSelectedCookbook] = useState<string>("");
@@ -91,7 +94,8 @@ const SocialSidebar = () => {
 
   useEffect(() => {
     const getRecipes = async () => {
-      const cookbookList: any = [];
+      const tempCookbookList: any = [];
+      const tempTagList: any = [];
       const recipes = await getDocs(
         collection(db, selectedFriend, "recipeCollection", "recipes")
       );
@@ -111,19 +115,36 @@ const SocialSidebar = () => {
           source: recipe.source,
           briefDescription: recipe.briefDescription,
           cookBook: recipe.cookBook,
+          tags: recipe.tags,
         };
         recipeArray.push(temp);
-        if (!cookbookList.includes(recipe.cookBook)) {
-          cookbookList.push(recipe.cookBook);
+        if (!tempCookbookList.includes(recipe.cookBook) && recipe.cookBook) {
+          tempCookbookList.push(recipe.cookBook);
+        }
+        if (recipe.tags) {
+          for (let i = 0; i < recipe.tags.length; i++) {
+            if (!tempTagList.includes(recipe.tags[i].text)) {
+              tempTagList.push(recipe.tags[i].text);
+            }
+          }
         }
       });
       setFriendsRecipes(recipeArray);
-      setCookbookList(cookbookList);
+      setCookbookList(tempCookbookList);
+      setTagList(tempTagList);
     };
     if (selectedFriend) {
       getRecipes();
     }
   }, [selectedFriend]);
+
+  const handleTagsClick = () => {
+    if (openSubMenu !== "tags") {
+      setOpenSubMenu("tags");
+    } else {
+      setOpenSubMenu("");
+    }
+  };
 
   return (
     <Social_Sidebar_Container>
@@ -140,6 +161,7 @@ const SocialSidebar = () => {
           setOpenSubMenu={setOpenSubMenu}
         ></SocialSidebarFunctions>
       ) : null}
+      <br></br>
       {selectedFriend ? (
         <Social_Sidebar_Label onClick={handleCookbookClick}>
           Cookbooks
@@ -153,6 +175,7 @@ const SocialSidebar = () => {
           allRecipes={friendsRecipes}
         ></SocialCookbookComponent>
       ) : null}
+      <br></br>
       {selectedFriend ? (
         <Social_Sidebar_Label onClick={handleSearchClick}>
           Search
@@ -162,6 +185,20 @@ const SocialSidebar = () => {
         <SocialSearchComponent
           allRecipes={friendsRecipes}
         ></SocialSearchComponent>
+      ) : null}
+      <br></br>
+      {selectedFriend ? (
+        <Social_Sidebar_Label onClick={handleTagsClick}>
+          Tags
+        </Social_Sidebar_Label>
+      ) : null}
+      {openSubMenu === "tags" ? (
+        <SocialTags
+          setSelectedTag={setSelectedTag}
+          selectedTag={selectedTag}
+          tagList={tagList}
+          allRecipes={friendsRecipes}
+        ></SocialTags>
       ) : null}
     </Social_Sidebar_Container>
   );
