@@ -79,6 +79,7 @@ const Login = () => {
           }}
           value={signInEmail}
           placeholder="Sign In Email"
+          type="email"
         />
 
         <input
@@ -87,6 +88,7 @@ const Login = () => {
           }}
           value={signInPassword}
           placeholder="Sign In Password"
+          type="password"
         />
 
         <button onClick={handleSignIn}>Sign In</button>
@@ -98,6 +100,7 @@ const Login = () => {
           }}
           value={signUpEmail}
           placeholder="Sign Up Email"
+          type="email"
         />
 
         <input
@@ -106,6 +109,7 @@ const Login = () => {
           }}
           value={signUpPassword}
           placeholder="Sign Up Password"
+          type="password"
         />
         <button onClick={handleSignUp}>Sign Up</button>
       </div>

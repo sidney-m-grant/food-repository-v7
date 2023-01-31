@@ -10,6 +10,8 @@ export const Recipe_Input_SideBar = styled.div`
   border: 1px;
   border-style: solid;
   top: 30px;
+  overflow-y: scroll;
+  padding-bottom: 2px;
 `;
 
 const RecipeInputSidebar = () => {

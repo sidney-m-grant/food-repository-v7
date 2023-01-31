@@ -56,6 +56,10 @@ const unitRegex = new RegExp("\\b(" + unitList.join("|") + ")\\b", "g");
 const RecipeInputSidebarFunctions = () => {
   const [urlToScrape, setUrlToScrape] = useState<string>("");
   const [tagAddInput, setTagAddInput] = useState<string>("");
+  const [splitIngredientArrayInput, setSplitIngredientArrayInput] =
+    useState<string>("");
+  const [splitRecipeArrayInput, setSplitRecipeArrayInput] =
+    useState<string>("");
   const state = useHookstate(store);
   const { user } = useAuth();
 
@@ -285,6 +289,13 @@ const RecipeInputSidebarFunctions = () => {
     return recipeIngredients;
   };
 
+  const handleSplitBlockOfText = () => {
+    const tempRecipeSplit = splitRecipeArrayInput.trim().split(/\n/);
+    const tempIngredientSplit = splitIngredientArrayInput.trim().split(/\n/);
+    handleRecipeStepSplit(tempRecipeSplit);
+    handleIngredientSplit(tempIngredientSplit);
+  };
+
   const runScrape = () => {
     fetch("/api/scraper", {
       method: "POST",
@@ -508,6 +519,17 @@ const RecipeInputSidebarFunctions = () => {
           value={urlToScrape}
         />
         <button onClick={runScrape}>Run Scrape</button>
+        <h5>Recipe Instruction Split</h5>
+        <textarea
+          onChange={(e) => setSplitRecipeArrayInput(e.target.value)}
+          value={splitRecipeArrayInput}
+        />
+        <h5>Recipe Ingredient Split</h5>
+        <textarea
+          onChange={(e) => setSplitIngredientArrayInput(e.target.value)}
+          value={splitIngredientArrayInput}
+        />
+        <button onClick={handleSplitBlockOfText}>Split Manually</button>
       </Scraper_Container>
       <Tag_List_Container>
         <input
@@ -518,6 +540,7 @@ const RecipeInputSidebarFunctions = () => {
         <h5>List of Current Tags:</h5>
         {state.inputRecipe.tags.get() ? <ol>{tagListMap}</ol> : null}
       </Tag_List_Container>
+      <div style={{ height: 10 }}></div>
     </div>
   );
 };
