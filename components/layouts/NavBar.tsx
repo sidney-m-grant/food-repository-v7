@@ -43,11 +43,11 @@ const NavBar = () => {
 
   return (
     <Nav_Bar>
-      <button onClick={handleRecipeListClick}>To Recipe List</button>
       <button onClick={handleRecipeInputClick}>To Recipe Input</button>
+      <button onClick={handleRecipeListClick}>To Recipe List</button>
+      <button onClick={handleRecipeEditClick}>To Edit Recipe</button>
       <button onClick={handleSocialClick}>To Social</button>
       <button onClick={handleLoginClick}>To Sign In</button>
-      <button onClick={handleRecipeEditClick}>To Edit Recipe</button>
     </Nav_Bar>
   );
 };
