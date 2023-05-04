@@ -32,6 +32,12 @@ const Edit_Brief_Description_Text_Area = styled.textarea`
 const RecipeEditHeader = () => {
   const state = useHookstate(store);
 
+  const handleNameChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    state.editedRecipe.recipeName.set(e.target.value);
+  };
+
   const handleServesAmountChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -56,10 +62,20 @@ const RecipeEditHeader = () => {
     state.editedRecipe.cookBook.set(e.target.value);
   };
 
+  const handleCookingTimeChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    state.editedRecipe.cookingTime.set(e.target.value);
+  };
+
   return (
     <>
       <Edit_Header_Container>
-        <span>{state.editedRecipe.recipeName.get()}</span>
+        <input
+          onChange={handleNameChange}
+          placeholder="name..."
+          value={state.editedRecipe.recipeName.get()}
+        ></input>
         <input
           onChange={handleServesAmountChange}
           placeholder="serves..."
@@ -74,6 +90,11 @@ const RecipeEditHeader = () => {
           onChange={handleNewCookbookInputChange}
           placeholder="cookbook..."
           value={state.editedRecipe.cookBook.get()}
+        ></input>
+        <input
+          onChange={handleCookingTimeChange}
+          placeholder="cooking time..."
+          value={state.editedRecipe.cookingTime.get()}
         ></input>
         <br></br>
         <Edit_Brief_Description_Text_Area

@@ -8,9 +8,15 @@ import CurrentRecipeStepBlock from "./CurrentRecipeStepBlock";
 export const Current_Recipe_Container = styled.div`
   display: grid;
   grid-template-columns: 1fr 2fr;
+  border: 1px;
+  border-style: solid;
 `;
 
-const CurrentRecipeContainer = () => {
+interface Props {
+  multiplier: number;
+}
+
+const CurrentRecipeContainer: React.FC<Props> = ({ multiplier }) => {
   const state = useHookstate(store);
 
   const listIngredients = state.currentRecipe.ingredientList
@@ -20,6 +26,7 @@ const CurrentRecipeContainer = () => {
         <li key={ingredientBlock.blockNumber}>
           <CurrentRecipeIngredientBlock
             key={ingredientBlock.blockNumber}
+            multiplier={multiplier}
             ingredientBlock={ingredientBlock}
           />
         </li>

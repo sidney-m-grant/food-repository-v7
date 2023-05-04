@@ -143,6 +143,19 @@ const RecipeInputSidebarFunctions = () => {
     }
   };
 
+  const addNewNote = () => {
+    const length = state.inputRecipe.notes.length;
+    state.inputRecipe.notes[length].set({
+      text: "",
+      id: length,
+    });
+  };
+
+  const deleteLastNote = () => {
+    const length = state.inputRecipe.notes.length;
+    state.inputRecipe.notes[length - 1].set(none);
+  };
+
   const handleImgPreview = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) {
       setTempImageFile(null);
@@ -318,6 +331,9 @@ const RecipeInputSidebarFunctions = () => {
   const handleRecipeStepSplit = (tempArray: string[]) => {
     // takes input in the recipe input, trims any whitespace at the ends, and then splits for every new line
     // initialize variables
+    for (let i = 0; i < tempArray.length; i++) {
+      tempArray[i] = tempArray[i].replace(/&nbsp;/g, " ");
+    }
     let firstStep = true;
     let firstBlock = true;
     let counter = 0;
@@ -392,6 +408,9 @@ const RecipeInputSidebarFunctions = () => {
   };
 
   const handleIngredientSplit = (tempArray: string[]) => {
+    for (let i = 0; i < tempArray.length; i++) {
+      tempArray[i].replace("&nbsp;", " ");
+    }
     let tempAmount = "";
     let tempUnit: any = "";
     let tempName = "";
@@ -508,6 +527,10 @@ const RecipeInputSidebarFunctions = () => {
         <button onClick={deleteLastIngredientBlock}>
           Delete Last Ingredient Block
         </button>
+
+        <button onClick={addNewNote}>Add New Note</button>
+        <button onClick={deleteLastNote}>Delete Last Note</button>
+
         <button onClick={uploadRecipe}>Upload Recipe</button>
 
         <input type="file" onChange={handleImgPreview}></input>

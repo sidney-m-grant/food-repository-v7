@@ -67,6 +67,8 @@ const RecipeEditSidebar = () => {
           briefDescription: recipe.briefDescription,
           cookBook: recipe.cookBook,
           tags: recipe.tags,
+          notes: recipe.notes,
+          cookingTime: recipe.cookingTime,
         };
         recipeArray.push(temp);
         if (!tempCookbookList.includes(recipe.cookBook) && recipe.cookBook) {

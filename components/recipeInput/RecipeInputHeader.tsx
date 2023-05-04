@@ -62,6 +62,12 @@ const RecipeInputHeader = () => {
     state.inputRecipe.cookBook.set(e.target.value);
   };
 
+  const handleCookingTimeChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    state.inputRecipe.cookingTime.set(e.target.value);
+  };
+
   return (
     <>
       <Input_Header_Container>
@@ -80,11 +86,15 @@ const RecipeInputHeader = () => {
           placeholder="source..."
           value={state.inputRecipe.source.get()}
         ></input>
-
         <input
           onChange={handleNewCookbookInputChange}
           placeholder="cookbook..."
           value={state.inputRecipe.cookBook.get()}
+        ></input>
+        <input
+          onChange={handleCookingTimeChange}
+          placeholder="cooking time..."
+          value={state.inputRecipe.cookingTime.get()}
         ></input>
         <br></br>
         <Input_Brief_Description_Text_Area

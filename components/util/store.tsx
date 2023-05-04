@@ -27,9 +27,11 @@ export type Recipe = {
   imgPath: string;
   servesAmount: string;
   source: string;
+  cookingTime: string;
   briefDescription: string;
   cookBook: string;
   tags: Tag[];
+  notes: Note[];
 };
 
 export type RecipeStep = {
@@ -42,14 +44,26 @@ export type Tag = {
   id: number;
 };
 
+export type Note = {
+  text: string;
+  id: number;
+};
+
 const currentRecipe: Recipe = {
   recipeName: "",
   servesAmount: "",
   source: "",
+  cookingTime: "",
   briefDescription: "",
   cookBook: "",
   imgPath: "",
   tags: [],
+  notes: [
+    {
+      text: "",
+      id: 0,
+    },
+  ],
   stepList: [
     {
       for: "",
@@ -82,10 +96,17 @@ const editedRecipe: Recipe = {
   recipeName: "",
   servesAmount: "",
   source: "",
+  cookingTime: "",
   briefDescription: "",
   cookBook: "",
   imgPath: "",
   tags: [],
+  notes: [
+    {
+      text: "",
+      id: 0,
+    },
+  ],
   stepList: [
     {
       for: "",
@@ -118,10 +139,17 @@ const inputRecipe: Recipe = {
   recipeName: "",
   servesAmount: "",
   source: "",
+  cookingTime: "",
   briefDescription: "",
   cookBook: "",
   imgPath: "",
   tags: [],
+  notes: [
+    {
+      text: "",
+      id: 0,
+    },
+  ],
   stepList: [
     {
       for: "",
@@ -156,8 +184,15 @@ const socialRecipe: Recipe = {
   source: "",
   briefDescription: "",
   cookBook: "",
+  cookingTime: "",
   imgPath: "",
   tags: [],
+  notes: [
+    {
+      text: "",
+      id: 0,
+    },
+  ],
   stepList: [
     {
       for: "",

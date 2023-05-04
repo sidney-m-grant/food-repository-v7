@@ -112,6 +112,19 @@ const RecipeEditSidebarFunctions: React.FC<Props> = ({
     state.editedRecipe.ingredientList[length - 1].set(none);
   };
 
+  const addNewNote = () => {
+    const length = state.editedRecipe.notes.length;
+    state.editedRecipe.notes[length].set({
+      text: "",
+      id: length,
+    });
+  };
+
+  const deleteLastNote = () => {
+    const length = state.editedRecipe.notes.length;
+    state.editedRecipe.notes[length - 1].set(none);
+  };
+
   const handleImgPreview = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) {
       setTempImageFile(null);
@@ -193,6 +206,8 @@ const RecipeEditSidebarFunctions: React.FC<Props> = ({
         <button onClick={deleteLastIngredientBlock}>
           Delete Last Ingredient Block
         </button>
+        <button onClick={addNewNote}>Add New Note</button>
+        <button onClick={deleteLastNote}>Delete Last Note</button>
 
         <button onClick={uploadRecipe}>Upload Recipe</button>
 

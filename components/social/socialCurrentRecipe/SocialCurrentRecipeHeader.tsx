@@ -7,7 +7,6 @@ const Social_Recipe_Header_Container = styled.div`
   border: 1px;
   border-style: solid;
   width: calc(100% - 150px);
-  height: 150px;
   display: inline-flex;
   flex-wrap: wrap;
   row-gap: 0px;
@@ -25,16 +24,27 @@ const Social_Recipe_Image = styled.div`
 `;
 
 const Social_Recipe_Header_Element = styled.div`
-  height: 30px;
+  height: 50px;
   display: inline-block;
   border: 1px solid;
-  min-width: 250px;
+  width: 250px;
+  overflow-x: auto;
 `;
 
 const Social_Recipe_Header_Brief_Description_Element = styled.div`
   border: 1px solid;
   width: 100%;
   height: calc(100% - 30px);
+  overflow-x: scroll;
+`;
+
+const Social_Recipe_Header_Span = styled.span`
+  font-size: 14px;
+  padding: 1px;
+`;
+
+const Social_Recipe_Brief_Description_Paragraph = styled.p`
+  font-size: 14px;
 `;
 
 const SocialCurrentRecipeHeader = () => {
@@ -44,18 +54,34 @@ const SocialCurrentRecipeHeader = () => {
       <Social_Recipe_Header_Container>
         <div>
           <Social_Recipe_Header_Element>
-            <span>Name: {state.socialRecipe.recipeName.get()}</span>
+            <Social_Recipe_Header_Span>
+              <strong>Name:</strong> {state.socialRecipe.recipeName.get()}
+            </Social_Recipe_Header_Span>
           </Social_Recipe_Header_Element>
           <Social_Recipe_Header_Element>
-            <span>Serves: {state.socialRecipe.servesAmount.get()}</span>
+            <Social_Recipe_Header_Span>
+              <strong>Serves:</strong> {state.socialRecipe.servesAmount.get()}
+            </Social_Recipe_Header_Span>
+          </Social_Recipe_Header_Element>
+          <br></br>
+          <Social_Recipe_Header_Element>
+            <Social_Recipe_Header_Element>
+              <strong>Source:</strong> {state.socialRecipe.source.get()}
+            </Social_Recipe_Header_Element>
           </Social_Recipe_Header_Element>
           <Social_Recipe_Header_Element>
-            <span>Source: {state.socialRecipe.source.get()}</span>
+            <Social_Recipe_Header_Element>
+              <strong>Cooking Time:</strong>{" "}
+              {state.socialRecipe.cookingTime.get()}
+            </Social_Recipe_Header_Element>
           </Social_Recipe_Header_Element>
         </div>
         <br></br>
         <Social_Recipe_Header_Brief_Description_Element>
-          <p>Brief Description: {state.socialRecipe.briefDescription.get()}</p>
+          <Social_Recipe_Brief_Description_Paragraph>
+            <strong>Brief Description:</strong>{" "}
+            {state.socialRecipe.briefDescription.get()}
+          </Social_Recipe_Brief_Description_Paragraph>
         </Social_Recipe_Header_Brief_Description_Element>
       </Social_Recipe_Header_Container>
       <Social_Recipe_Image>

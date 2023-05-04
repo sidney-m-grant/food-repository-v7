@@ -62,9 +62,11 @@ const RecipeListSidebar = () => {
           imgPath: recipe.imgPath,
           servesAmount: recipe.servesAmount,
           source: recipe.source,
+          cookingTime: recipe.cookingTime,
           briefDescription: recipe.briefDescription,
           cookBook: recipe.cookBook,
           tags: recipe.tags,
+          notes: recipe.notes,
         };
         recipeArray.push(temp);
         if (!tempCookbookList.includes(recipe.cookBook) && recipe.cookBook) {
