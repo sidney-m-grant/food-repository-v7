@@ -14,17 +14,17 @@ const SocialCurrentRecipeIngredientBlock: React.FC<Props> = ({
   const state = useHookstate(store);
 
   const checkIngredientAmountsForNumbers = () => {
-    for (let i = 0; i < state.currentRecipe.ingredientList.length; i++) {
+    for (let i = 0; i < state.socialRecipe.ingredientList.length; i++) {
       for (
         let j = 0;
-        j < state.currentRecipe.ingredientList[i].ingredients.length;
+        j < state.socialRecipe.ingredientList[i].ingredients.length;
         j++
       ) {
         if (
           !Number(
-            state.currentRecipe.ingredientList[i].ingredients[j].amount.get()
+            state.socialRecipe.ingredientList[i].ingredients[j].amount.get()
           ) &&
-          state.currentRecipe.ingredientList[i].ingredients[j].amount.get()
+          state.socialRecipe.ingredientList[i].ingredients[j].amount.get()
         ) {
           return false;
         }
