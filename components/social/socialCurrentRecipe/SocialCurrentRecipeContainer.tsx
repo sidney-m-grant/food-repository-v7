@@ -10,7 +10,11 @@ export const Social_Current_Recipe_Container = styled.div`
   grid-template-columns: 1fr 2fr;
 `;
 
-const SocialCurrentRecipeContainer = () => {
+interface Props {
+  multiplier: number;
+}
+
+const SocialCurrentRecipeContainer: React.FC<Props> = ({ multiplier }) => {
   const state = useHookstate(store);
 
   const listIngredients = state.socialRecipe.ingredientList
@@ -20,6 +24,7 @@ const SocialCurrentRecipeContainer = () => {
         <li key={ingredientBlock.blockNumber}>
           <SocialCurrentRecipeIngredientBlock
             key={ingredientBlock.blockNumber}
+            multiplier={multiplier}
             ingredientBlock={ingredientBlock}
           />
         </li>
